@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  dashboard-query-service:
+    build:
+      context: ../dashboard-service/dashboard_query_service
+      dockerfile: Dockerfile
+    container_name: dashboard-query-service
+    ports:
+      - "8082:8082"
+    environment:
+      - MONGO_USER=dashboard_admin
+      - MONGO_PASSWORD=dashboard_admin
+      - MONGO_HOST=consent-mongo
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=consent_dashboard
+      - KAFKA_BOOTSTRAP_SERVERS=consent-kafka:29092
+    depends_on:
+      - mongo
+      - kafka
+    networks:
+      - consent-network
+
+  mongo:
+    image: mongo:7
+    container_name: consent-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dashboard_admin
+      MONGO_INITDB_ROOT_PASSWORD: dashboard_admin
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - consent-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: consent-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      CLUSTER_ID: 6Nr1YSmjS-2ZQ71vgF1Hbw
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - consent-network
+
+volumes:
+  mongo_data:
+  kafka_data:
+
+networks:
+  consent-network:
+    driver: bridge

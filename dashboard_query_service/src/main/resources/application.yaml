@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: dashboard_query_service
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: dashboard_admin
+      password: dashboard_admin
+      database: consent_dashboard
+      authentication-database: admin
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: dashboard-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.tcc.dashboard_query_service.infrastructure.messaging.DTOs
+        spring.json.type.mapping: ConsentEventMessage:com.tcc.dashboard_query_service.infrastructure.messaging.DTOs.ConsentEventMessage
+
+server:
+  port: 8082
+
+logging:
+  level:
+    com.tcc: DEBUG
+    org.springframework.kafka: DEBUG

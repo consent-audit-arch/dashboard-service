@@ -1,0 +1,19 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - org.springframework.kafka.annotation.KafkaAnnotationDrivenConfiguration
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: test
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: test-group
+
+server:
+  port: 0
