@@ -16,7 +16,12 @@ WORKDIR /app
 
 COPY --from=build /app/target/dashboard_query_service-0.0.1-SNAPSHOT.jar app.jar
 
-RUN chown appuser:appuser app.jar
+COPY opa/policies /opa/policies
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+RUN chown appuser:appuser app.jar /entrypoint.sh
 
 USER appuser
 
@@ -24,4 +29,4 @@ EXPOSE 8080
 
 ENV JAVA_OPTS=
 
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["/entrypoint.sh"]
