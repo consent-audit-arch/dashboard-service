@@ -3,14 +3,14 @@ spring:
     name: dashboard_query_service
   data:
     mongodb:
-      host: localhost
+      host: consent-mongo
       port: 27017
       username: dashboard_admin
       password: dashboard_admin
       database: consent_dashboard
       authentication-database: admin
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: consent-kafka:9092
     consumer:
       group-id: dashboard-service-group
       auto-offset-reset: earliest
@@ -21,7 +21,7 @@ spring:
         spring.json.type.mapping: ConsentEventMessage:com.tcc.dashboard_query_service.infrastructure.messaging.DTOs.ConsentEventMessage
 
 server:
-  port: 8082
+  port: 8080
 
 logging:
   level:

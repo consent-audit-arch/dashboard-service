@@ -23,8 +23,6 @@ RUN chmod +x /entrypoint.sh
 
 RUN chown appuser:appuser app.jar /entrypoint.sh
 
-USER appuser
-
 EXPOSE 8080
 
 ENV JAVA_OPTS=
